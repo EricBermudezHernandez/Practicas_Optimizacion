@@ -11,14 +11,14 @@
 void GRAFO ::destroy() {
   for (unsigned i{0}; i < n_; ++i) {
     LS_[i].clear();
-    A[i].clear();
+    //A[i].clear();
     if (dirigido_ == 1) {
       LP_[i].clear();
     }
   }
   LS_.clear();
   LP_.clear();
-  A.clear();
+  //A.clear();
 }
 
 void GRAFO ::build(char nombrefichero[85], int &errorapertura) {
@@ -50,19 +50,15 @@ void GRAFO ::build(char nombrefichero[85], int &errorapertura) {
         aux.j = (i - 1);  // El predecesor es el propio nodo en el que estábamos
         aux.c = dummy.c;  // El coste es el mismo al tratarse del mismo arco
         LP_.resize(n_);
-        LP_[dummy.j].emplace_back(
-            aux);  // Actualizamos la lista de predecesores del nodo j, diciendo
-                   // que el predecesor es el nodo i
+        LP_[dummy.j].emplace_back(aux);  // Actualizamos la lista de predecesores del nodo j, diciendo
+                                        // que el predecesor es el nodo i
       } else {     // El grafo es no dirigido
         if (i - 1 != dummy.j) {  // Comprobamos que no es un bucle, por que si
                                  // no estaríamos insertando dos veces lo mismo
-          aux.j =
-              (i -
-               1);  // El nodo adyacente es el propio nodo i en el que estábamos
+          aux.j = (i - 1);  // El nodo adyacente es el propio nodo i en el que estábamos
           aux.c = dummy.c;  // El coste es el mismo al tratarse del mismo arco
-          LS_[dummy.j].emplace_back(
-              aux);  // Actualizamos la lista de adyacencia del nodo sucesor de
-                     // j(nodo sucesor de i)
+          LS_[dummy.j].emplace_back(aux);  // Actualizamos la lista de adyacencia del nodo sucesor de
+                                          // j(nodo sucesor de i)
         }
       }
     }
@@ -151,16 +147,16 @@ void GRAFO::RecorridoProfundidad() {
   dfs_num((i - 1), LS_, visitado, prenum, prenum_ind, postnum, postnum_ind);
   // mostrar en pantalla el preorden
   std::cout << "Orden de visita de los nodos en preorden" << std::endl;
-  for (int i{0}; i < prenum.size() - 1; ++i) {
+  for (int i{0}; i < prenum_ind; ++i) {
     std::cout << "[" << (prenum[i] + 1) << "]";
-    if (i != (prenum.size() - 2)) std::cout << " -> ";
+    if (i != (prenum_ind - 1)) std::cout << " -> ";
   }
   std::cout << std::endl;
   // mostrar en pantalla el postorden
   std::cout << "Orden de visita de los nodos en postorden" << std::endl;
-  for (int j{0}; j < postnum.size() - 1; ++j) {
+  for (int j{0}; j < postnum_ind; ++j) {
     std::cout << "[" << (postnum[j] + 1) << "]";
-    if (j != (prenum.size() - 2)) std::cout << " -> ";
+    if (j != (postnum_ind - 1)) std::cout << " -> ";
   }
   std::cout << std::endl;
 }
@@ -190,8 +186,7 @@ void GRAFO::bfs_num(
     unsigned k = cola.front();  // cogemos el nodo k+1 de la cola
     cola.pop();                 // lo sacamos de la cola
     // Hacemos el recorrido sobre L desde el nodo k+1
-    for (unsigned j{0}; j < L[k].size();
-         ++j) {  // Recorremos todos los nodos u adyacentes al nodo k+1
+    for (unsigned j{0}; j < L[k].size(); ++j) {  // Recorremos todos los nodos u adyacentes al nodo k+1
 
       // Si el nodo u no está visitado
       if (visitado[L[k][j].j] == false) {
@@ -220,16 +215,35 @@ void GRAFO::RecorridoAmplitud() {
   // solicitud al usuario del nodo inicial del recorrido en amplitud
   std::cout << "Elije nodo de partida [1- " << n_ << "]: ";
   std::cin >> i;
+  std::cout << "Nodo inicial: " << i << std::endl;
   bfs_num((i - 1), LS_, pred, d);
   // mostrar en pantalla la etiqueta distancia
-  std::cout << "Nodos según distancia al nodo inicial en número de aristas"
-            << std::endl;
-  for (int i{0}; i < d.size(); ++i) {
-    std::cout << "Distancia " << d[i] << " aristas : " << (i + 1) << std::endl;
+  int distancia_maxima{0};
+  
+  for (int z{0}; z < d.size(); ++z) {
+    if (distancia_maxima < d[z]) distancia_maxima = d[z];
   }
-  std::cout << "\nRamas de conexión en el recorrido" << std::endl;
+  std::cout << "\nNodos segun distancia al nodo inicial en numero de aristas\n";
+  std::cout << "Distancia 0 aristas : " << i << std::endl;
+  for (int i{1}; i <= distancia_maxima; ++i) {
+    std::cout << "Distancia " << i << " aristas";    
+    for(int j{0}; j < d.size(); ++j) {
+      if (i == d[j]) {
+        std::cout << " : " << (j + 1);
+      }
+    }
+    std::cout << std::endl;
+  }
+
   // mostrar en pantalla los predecesores
-  for (int j{0}; j < pred.size(); ++j) {
-    std::cout << (j + 1) << " - " << (pred[j] + 1) << std::endl;
+  std::cout << "\nRamas de conexión en el recorrido" << std::endl;
+  for (int j{0}; j < pred.size(); ++j) {    
+    if (d[j] != 0) {
+      if (d[j] == 1) {
+        std::cout << (pred[j] + 1) << " - " << (j + 1) << std::endl;
+      } else {
+        std::cout << i << " - " << (pred[j] + 1) << " - " << (j + 1) << std::endl;
+      }
+    }
   }
 }
