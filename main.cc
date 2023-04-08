@@ -88,7 +88,6 @@ int main(int argc, char *argv[]) {
         case 'i':
           std::cout << "Grafo cargado desde " << nombrefichero << std::endl;
           G.Info_Grafo();
-
           break;
         
         case 's': // Muestra lista de sucesores
@@ -107,10 +106,12 @@ int main(int argc, char *argv[]) {
           break;
         
         case 'm':
+          std::cout << "Vamos a construir un recorrido en amplitud" << std::endl;
           G.RecorridoAmplitud();
           break;
 
         case 'r':
+          std::cout << "Vamos a construir un recorrido en profundidad" << std::endl;
           G.RecorridoProfundidad();
           break;
           // Situar aquí el resto de opciones del menú
@@ -119,5 +120,6 @@ int main(int argc, char *argv[]) {
   }
   std::cout << "Fin del programa" << std::endl;
   G.~GRAFO();
+  std::cout << "Saliendo" << std::endl;
   return (0);
 }
