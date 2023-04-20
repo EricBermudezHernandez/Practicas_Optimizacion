@@ -11,14 +11,14 @@
 void GRAFO ::destroy() {
   for (unsigned i{0}; i < n_; ++i) {
     LS_[i].clear();
-    //A[i].clear();
+    // A[i].clear();
     if (dirigido_ == 1) {
       LP_[i].clear();
     }
   }
   LS_.clear();
   LP_.clear();
-  //A.clear();
+  // A.clear();
 }
 
 void GRAFO ::build(char nombrefichero[85], int &errorapertura) {
@@ -50,15 +50,19 @@ void GRAFO ::build(char nombrefichero[85], int &errorapertura) {
         aux.j = (i - 1);  // El predecesor es el propio nodo en el que estábamos
         aux.c = dummy.c;  // El coste es el mismo al tratarse del mismo arco
         LP_.resize(n_);
-        LP_[dummy.j].emplace_back(aux);  // Actualizamos la lista de predecesores del nodo j, diciendo
-                                        // que el predecesor es el nodo i
+        LP_[dummy.j].emplace_back(
+            aux);  // Actualizamos la lista de predecesores del nodo j, diciendo
+                   // que el predecesor es el nodo i
       } else {     // El grafo es no dirigido
         if (i - 1 != dummy.j) {  // Comprobamos que no es un bucle, por que si
                                  // no estaríamos insertando dos veces lo mismo
-          aux.j = (i - 1);  // El nodo adyacente es el propio nodo i en el que estábamos
+          aux.j =
+              (i -
+               1);  // El nodo adyacente es el propio nodo i en el que estábamos
           aux.c = dummy.c;  // El coste es el mismo al tratarse del mismo arco
-          LS_[dummy.j].emplace_back(aux);  // Actualizamos la lista de adyacencia del nodo sucesor de
-                                          // j(nodo sucesor de i)
+          LS_[dummy.j].emplace_back(
+              aux);  // Actualizamos la lista de adyacencia del nodo sucesor de
+                     // j(nodo sucesor de i)
         }
       }
     }
@@ -87,16 +91,18 @@ bool GRAFO::Es_dirigido() {
 }
 
 void GRAFO::Info_Grafo() {
+  system("clear");  // Limpiamos la consola
   if (Es_dirigido()) {
     std::cout << "Grafo dirigido  | nodos " << n_ << " | arcos " << m_
               << std::endl;
   } else {
-    std::cout << "Grafo no dirigido  | nodos " << n_ << " | arcos " << m_
+    std::cout << "Grafo no dirigido  | nodos " << n_ << " | aristas " << m_
               << std::endl;
   }
 }
 
 void Mostrar_Lista(std::vector<LA_nodo> L) {
+  system("clear");  // Limpiamos la consola
   for (int i{0}; i < L.size(); ++i) {
     std::cout << "[" << (i + 1) << "] : ";
     if (L[i].empty()) std::cout << "null";
@@ -108,9 +114,11 @@ void Mostrar_Lista(std::vector<LA_nodo> L) {
 }
 
 void GRAFO ::Mostrar_Listas(int l) {
+  system("clear");  // Limpiamos la consola
   if (l == 0 || l == 1) {
     Mostrar_Lista(LS_);
   } else {
+    std::cout << "Nodos de la lista de predecesores" << std::endl;
     Mostrar_Lista(LP_);
   }
 }
@@ -125,6 +133,7 @@ void GRAFO::dfs_num(
     unsigned &postnum_ind) {  // Recorrido en profundidad recursivo con
                               // recorridos enum y postnum
 
+  system("clear");  // Limpiamos la consola
   visitado[i] = true;
   prenum[prenum_ind++] =
       i;  // asignamos el orden de visita prenum que corresponde el nodo i
@@ -137,6 +146,7 @@ void GRAFO::dfs_num(
 }
 
 void GRAFO::RecorridoProfundidad() {
+  system("clear");  // Limpiamos la consola
   // creación e inicialización de variables y vectores
   unsigned i, prenum_ind{0}, postnum_ind{0};
   std::vector<bool> visitado(n_, false);
@@ -168,7 +178,7 @@ void GRAFO::bfs_num(
     std::vector<unsigned> &d) {   // std::vector de distancias a nodo i+1
                                  // Recorrido en amplitud con la construcción de
                                  // pred y d: usamos la cola
-
+  system("clear");             // Limpiamos la consola
   std::vector<bool> visitado;  // creamos e iniciamos el std::vector visitado
   visitado.resize(n_, false);
   visitado[i] = true;
@@ -186,7 +196,8 @@ void GRAFO::bfs_num(
     unsigned k = cola.front();  // cogemos el nodo k+1 de la cola
     cola.pop();                 // lo sacamos de la cola
     // Hacemos el recorrido sobre L desde el nodo k+1
-    for (unsigned j{0}; j < L[k].size(); ++j) {  // Recorremos todos los nodos u adyacentes al nodo k+1
+    for (unsigned j{0}; j < L[k].size();
+         ++j) {  // Recorremos todos los nodos u adyacentes al nodo k+1
 
       // Si el nodo u no está visitado
       if (visitado[L[k][j].j] == false) {
@@ -209,6 +220,7 @@ void GRAFO::bfs_num(
 // Construye un recorrido en amplitud desde un
 // nodo inicial
 void GRAFO::RecorridoAmplitud() {
+  system("clear");  // Limpiamos la consola
   // creación e inicialización de variables y vectores
   unsigned i;  // nodo desde el que realizamos el recorrido en amplitud
   std::vector<unsigned> pred, d;
@@ -219,15 +231,15 @@ void GRAFO::RecorridoAmplitud() {
   bfs_num((i - 1), LS_, pred, d);
   // mostrar en pantalla la etiqueta distancia
   int distancia_maxima{0};
-  
+
   for (int z{0}; z < d.size(); ++z) {
     if (distancia_maxima < d[z]) distancia_maxima = d[z];
   }
   std::cout << "\nNodos segun distancia al nodo inicial en numero de aristas\n";
   std::cout << "Distancia 0 aristas : " << i << std::endl;
   for (int i{1}; i <= distancia_maxima; ++i) {
-    std::cout << "Distancia " << i << " aristas";    
-    for(int j{0}; j < d.size(); ++j) {
+    std::cout << "Distancia " << i << " aristas";
+    for (int j{0}; j < d.size(); ++j) {
       if (i == d[j]) {
         std::cout << " : " << (j + 1);
       }
@@ -237,13 +249,106 @@ void GRAFO::RecorridoAmplitud() {
 
   // mostrar en pantalla los predecesores
   std::cout << "\nRamas de conexión en el recorrido" << std::endl;
-  for (int j{0}; j < pred.size(); ++j) {    
+  for (int j{0}; j < pred.size(); ++j) {
     if (d[j] != 0) {
       if (d[j] == 1) {
         std::cout << (pred[j] + 1) << " - " << (j + 1) << std::endl;
       } else {
-        std::cout << i << " - " << (pred[j] + 1) << " - " << (j + 1) << std::endl;
+        std::cout << i << " - " << (pred[j] + 1) << " - " << (j + 1)
+                  << std::endl;
       }
     }
   }
+}
+
+void GRAFO::Prim() {
+  system("clear");  // Limpiamos la consola
+  // Es posible que en nuestro grafo hayan nodos islas, es decir sin ningun nodo
+  // adyacente. En este caso recorremos el vector entero de nodos y vemos sus
+  // adyacentes, si vemos que hay un nodo con ningún sucesor es que no tiene
+  // adyacentes y es una isla
+  int contador{0}, componentes_conexas{1};
+  bool conexo{true};
+  std::vector<unsigned> islas;
+  for (int i{0}; i < LS_.size(); ++i) {
+    if (LS_[i].size() != 0) {
+      contador++;
+    } else {
+      islas.emplace_back(i);
+      conexo = false;
+      componentes_conexas++;
+    }
+  }
+  contador--;  // La solución es n - 1 aristas, decrementamos ya el número de
+               // aristas
+  // T = ∅
+  unsigned T{0}, u{0};  // Aristas que forman parte de la solución y nodo u
+  std::vector<unsigned> pred(
+      contador);  // Inicializamos el vector con el tamaño de aristas
+  std::vector<bool> M(
+      contador,
+      false);  // Inicializamos el vector con el tamaño de aristas y todo falso
+               // ya que todavía no se han visitado los nodos
+  // Para todo nodo i de V hacer coste[i] = ∞
+  std::vector<int> coste(
+      contador, maxint);  // Almacena el coste que incorporamos al arbol si
+                          // introducimos un nodo en la solución
+  // M = {1}
+  M[0] = true;
+  // coste[1] = 0
+  coste[0] = 0;
+  // pred[1] = 1
+  pred[0] = 1;
+  // Mientras en T no haya n-1 aristas hacer
+  std::cout << "Iniciamos desde el nodo 1:" << std::endl;
+  while (T != contador) {
+    // sea u el último nodo que entró en M, u va a mejorar costes
+    // para todo z adyacente a u en V-M hacer
+    for (int z{0}; z < LS_[u].size(); ++z) {
+      // si coste[z] > w(u, z) entonces
+      if ((!M[LS_[u][z].j]) && coste[LS_[u][z].j] > LS_[u][z].c) {
+        // coste[z] = w(u,z)
+        coste[LS_[u][z].j] = LS_[u][z].c;  // Esta arista es menos costosa
+        // pred[z] = u
+        pred[LS_[u][z].j] = u;  // cambio el nodo de conexión
+      }
+    }
+    // sea u = nodo con menor coste en V-M
+    int coste_menor{maxint};
+    unsigned nodo;
+    for (int z{0}; z < LS_[u].size(); ++z) {
+      if (!M[LS_[u][z].j] && coste_menor > LS_[u][z].c) {
+        coste_menor = LS_[u][z].c;
+        nodo = LS_[u][z].j;
+      }
+    }
+    // M = M U {u}
+    u = nodo;
+    M[u] = true;
+    // T = T U {(u, pred[u])]
+    std::cout << "(" << pred[u] + 1 << ", " << u + 1 << ") "
+              << "[" << coste[u] << "]" << std::endl;
+    T++;  // Insertamos arista
+  }
+  // Imprimir la solución:
+  if (!conexo) {
+    for (int i{0}; i < islas.size(); ++i) {
+      std::cout << "Reiniciamos desde el nodo " << (islas[i] + 1) << ":" << std::endl;
+      std::cout << "Esta componente conexa tiene un único nodo, y por tanto, "
+                   "no se añade arista alguna"
+                << std::endl
+                << std::endl;
+    }
+    std::cout << "El grafo no es conexo\nEl número de componentes conexas encontradas es: " << componentes_conexas << std::endl;
+
+  }
+
+  int peso_mst{0};
+  for (int i{0}; i < coste.size(); ++i) {
+    if (coste[i] != maxint) {
+      peso_mst += coste[i];
+    }
+  }
+  std::cout << "El peso del MST encontrado es: " << peso_mst << std::endl
+            << std::endl;
 }
