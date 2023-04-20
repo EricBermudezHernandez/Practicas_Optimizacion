@@ -45,6 +45,7 @@ class GRAFO {
                                 // un nodo inicial
   void RecorridoAmplitud();  // Construye un recorrido en amplitud desde un nodo
                              // inicial
+  void Prim();
   ~GRAFO();                  // Destructor del objeto grafo
 
  private:
@@ -56,7 +57,7 @@ class GRAFO {
            // posiblemente es posiblemente de distinto tamaño
   std::vector<LA_nodo>
       LP_;  // Lista de adyacencia de los predecesores: es una matriz dode cada
-           // fila posiblemente es posiblemente de distinto tamaño
+           // fila posiblemente es de distinto tamaño
   std::vector<LA_nodo> A;  // Matriz de adyacencia, tanto adyacencia como costes
   void destroy();     // Destructor del LS, A, y LP, en su caso
   void build(char nombrefichero[85],
