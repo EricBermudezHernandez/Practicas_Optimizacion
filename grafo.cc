@@ -284,15 +284,15 @@ void GRAFO::Prim() {
   // T = ∅
   unsigned T{0}, u{0};  // Aristas que forman parte de la solución y nodo u
   std::vector<unsigned> pred(
-      contador);  // Inicializamos el vector con el tamaño de aristas
+      contador + 1);  // Inicializamos el vector con el tamaño de aristas
   std::vector<bool> M(
-      contador,
+      contador + 1,
       false);  // Inicializamos el vector con el tamaño de aristas y todo falso
                // ya que todavía no se han visitado los nodos
   // Para todo nodo i de V hacer coste[i] = ∞
   std::vector<int> coste(
-      contador, maxint);  // Almacena el coste que incorporamos al arbol si
-                          // introducimos un nodo en la solución
+      contador + 1, maxint);  // Almacena el coste que incorporamos al arbol si
+                              // introducimos un nodo en la solución
   // M = {1}
   M[0] = true;
   // coste[1] = 0
@@ -315,34 +315,20 @@ void GRAFO::Prim() {
     }
     // sea u = nodo con menor coste en V-M
     int coste_menor{maxint};
-    unsigned nodo;
-    for (int z{0}; z < LS_[u].size(); ++z) {
-      if (!M[LS_[u][z].j] && coste_menor > LS_[u][z].c) {
-        coste_menor = LS_[u][z].c;
-        nodo = LS_[u][z].j;
+    for (int z{1}; z < coste.size(); ++z) {
+      if (!M[z] && coste_menor > coste[z]) {
+        coste_menor = coste[z];
+        u = z;
       }
     }
     // M = M U {u}
-    u = nodo;
     M[u] = true;
     // T = T U {(u, pred[u])]
-    std::cout << "(" << pred[u] + 1 << ", " << u + 1 << ") "
-              << "[" << coste[u] << "]" << std::endl;
+    std::cout << "(" << pred[u] + 1 << ", " << u + 1 << ")"
+              << "[" << coste[u] << "];" << std::endl;
     T++;  // Insertamos arista
   }
   // Imprimir la solución:
-  if (!conexo) {
-    for (int i{0}; i < islas.size(); ++i) {
-      std::cout << "Reiniciamos desde el nodo " << (islas[i] + 1) << ":" << std::endl;
-      std::cout << "Esta componente conexa tiene un único nodo, y por tanto, "
-                   "no se añade arista alguna"
-                << std::endl
-                << std::endl;
-    }
-    std::cout << "El grafo no es conexo\nEl número de componentes conexas encontradas es: " << componentes_conexas << std::endl;
-
-  }
-
   int peso_mst{0};
   for (int i{0}; i < coste.size(); ++i) {
     if (coste[i] != maxint) {
@@ -351,4 +337,21 @@ void GRAFO::Prim() {
   }
   std::cout << "El peso del MST encontrado es: " << peso_mst << std::endl
             << std::endl;
+
+  // En el caso de que no sea conexo:
+  if (!conexo) {
+    for (int i{0}; i < islas.size(); ++i) {
+      std::cout << "Reiniciamos desde el nodo " << (islas[i] + 1) << ":"
+                << std::endl;
+      std::cout << "Esta componente conexa tiene un único nodo, y por tanto, "
+                   "no se añade arista alguna"
+                << std::endl
+                << std::endl;
+    }
+    std::cout << "El grafo no es conexo\nEl número de componentes conexas "
+                 "encontradas es: "
+              << componentes_conexas << std::endl
+              << "El peso total de los MST encontrados es " << peso_mst
+              << std::endl;
+  }
 }
