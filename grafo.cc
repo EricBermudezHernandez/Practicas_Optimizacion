@@ -91,7 +91,6 @@ bool GRAFO::Es_dirigido() {
 }
 
 void GRAFO::Info_Grafo() {
-  system("clear");  // Limpiamos la consola
   if (Es_dirigido()) {
     std::cout << "Grafo dirigido  | nodos " << n_ << " | arcos " << m_
               << std::endl;
@@ -102,7 +101,6 @@ void GRAFO::Info_Grafo() {
 }
 
 void Mostrar_Lista(std::vector<LA_nodo> L) {
-  system("clear");  // Limpiamos la consola
   for (int i{0}; i < L.size(); ++i) {
     std::cout << "[" << (i + 1) << "] : ";
     if (L[i].empty()) std::cout << "null";
@@ -114,11 +112,9 @@ void Mostrar_Lista(std::vector<LA_nodo> L) {
 }
 
 void GRAFO ::Mostrar_Listas(int l) {
-  system("clear");  // Limpiamos la consola
   if (l == 0 || l == 1) {
     Mostrar_Lista(LS_);
   } else {
-    std::cout << "Nodos de la lista de predecesores" << std::endl;
     Mostrar_Lista(LP_);
   }
 }
@@ -133,7 +129,6 @@ void GRAFO::dfs_num(
     unsigned &postnum_ind) {  // Recorrido en profundidad recursivo con
                               // recorridos enum y postnum
 
-  system("clear");  // Limpiamos la consola
   visitado[i] = true;
   prenum[prenum_ind++] =
       i;  // asignamos el orden de visita prenum que corresponde el nodo i
@@ -146,7 +141,6 @@ void GRAFO::dfs_num(
 }
 
 void GRAFO::RecorridoProfundidad() {
-  system("clear");  // Limpiamos la consola
   // creación e inicialización de variables y vectores
   unsigned i, prenum_ind{0}, postnum_ind{0};
   std::vector<bool> visitado(n_, false);
@@ -178,7 +172,7 @@ void GRAFO::bfs_num(
     std::vector<unsigned> &d) {   // std::vector de distancias a nodo i+1
                                  // Recorrido en amplitud con la construcción de
                                  // pred y d: usamos la cola
-  system("clear");             // Limpiamos la consola
+  // Limpiamos la consola
   std::vector<bool> visitado;  // creamos e iniciamos el std::vector visitado
   visitado.resize(n_, false);
   visitado[i] = true;
@@ -220,7 +214,6 @@ void GRAFO::bfs_num(
 // Construye un recorrido en amplitud desde un
 // nodo inicial
 void GRAFO::RecorridoAmplitud() {
-  system("clear");  // Limpiamos la consola
   // creación e inicialización de variables y vectores
   unsigned i;  // nodo desde el que realizamos el recorrido en amplitud
   std::vector<unsigned> pred, d;
@@ -262,7 +255,6 @@ void GRAFO::RecorridoAmplitud() {
 }
 
 void GRAFO::Prim() {
-  system("clear");  // Limpiamos la consola
   // Es posible que en nuestro grafo hayan nodos islas, es decir sin ningun nodo
   // adyacente. En este caso recorremos el vector entero de nodos y vemos sus
   // adyacentes, si vemos que hay un nodo con ningún sucesor es que no tiene
@@ -353,5 +345,227 @@ void GRAFO::Prim() {
               << componentes_conexas << std::endl
               << "El peso total de los MST encontrados es " << peso_mst
               << std::endl;
+  }
+}
+
+void GRAFO::MostrarCamino(unsigned s, unsigned i, std::vector<unsigned> pred) {
+  if (i != s) {
+    MostrarCamino(s, pred[i], pred);
+    std::cout << pred[i] + 1 << " - ";
+  }
+}
+
+void GRAFO::Dijkstra_(double &comparaciones, unsigned s) {
+  // Inicialmente no hay ningun nodo permanentemente etiquetado
+  std::vector<bool> PermanentementeEtiquetado(n_, false);
+  // Inicialmente todas las etiquetas distancias son infinito
+  std::vector<int> d(n_, maxint);
+  // Inicialmente el pred es null
+  std::vector<unsigned> pred(n_, UERROR);
+  int min{maxint};
+  unsigned candidato;
+  // La etiqueta distancia del nodo origen es 0, y es su propio pred
+  d[--s] = 0;
+  pred[s] = s;
+  comparaciones = 0;
+  do {
+    /*
+    -Buscamos un nodo candidato a ser permanentemente etiquetado
+        : aquel de entre los no permanentemente etiquetados,
+        es decir,
+        en el almacén con menor etiqueta distancia no infinita.-
+            Si existe ese candidato,
+    */
+    min = maxint;
+    for (int i{0}; i < n_; ++i) {
+      if (PermanentementeEtiquetado[i] == false) {
+        if (min > d[i]) {
+          min = d[i];
+          candidato = i;
+        }
+      }
+    }
+    /*
+         lo etiquetamos permanentemente y usamos los arcos de la lista de
+             sucesores para buscar atajos.Por cada comparación realizada para
+                 buscar atajos,
+         incrementamos el contador de comparaciones.-
+             Esto lo hacemos mientras haya candidatos
+     */
+    if (min != maxint) {  // mientras hayan candidatos
+      PermanentementeEtiquetado[candidato] = true;
+      for (int i{0}; i < LS_[candidato].size(); ++i) {
+        if (d[candidato] + LS_[candidato][i].c < d[LS_[candidato][i].j]) {
+          d[LS_[candidato][i].j] = d[candidato] + LS_[candidato][i].c;
+          pred[LS_[candidato][i].j] = candidato;
+        }
+        comparaciones++;
+      }
+    }
+  } while (min != maxint);
+
+  std::cout << "Soluciones:" << std::endl;
+  /*
+  En esta parte del código,
+      mostramos los caminos mínimos para cada nodo si los hay.
+  */
+  for (int i{1}; i < n_; ++i) {
+    if (d[i] != maxint) {
+      std::cout << "El camino desde " << (s + 1) << " al nodo " << (i + 1)
+                << " es : ";
+      MostrarCamino(s, i, pred);
+      std::cout << (i + 1) << " de longitud " << d[i] << std::endl;
+    } else {
+      std::cout << "No hay camino mínimo desde " << (s + 1) << " al nodo "
+                << (i + 1) << std::endl;
+    }
+  }
+}
+
+void GRAFO::BellmanFordEnd_(double &comparaciones, unsigned s) {
+  std::vector<int> d(n_, maxint);
+  std::vector<unsigned> pred(n_, UERROR);
+  unsigned numeromejoras = 0;
+  bool mejora;
+  d[--s] = 0;
+  pred[s] = s;
+  comparaciones = 0;
+  do {
+    mejora = false;
+    /*
+    // recorremos todos los arcos, y para cada (i, j), buscamos si d[j] > d[i]
+    +cij, y actualizamos d y pred,
+        incrementando el contador comparaciones cuando comparamos,
+        independientemente de si mejoramos o no.
+        // si al menos en una ocasion ha mejorado una etiqueta distancia, no
+        // hemos terminado;
+    contabilizamos los bucles en los que ha habido mejoras
+    */
+    for (int i{0}; i < n_; ++i) {
+      for (int j{0}; j < LS_[i].size(); ++j) {
+        if (d[LS_[i][j].j] >
+            (d[i] + LS_[i][j].c)) {  // Si el coste de su sucesor es mayor que
+                                     // el de su predecesor + el camino
+          d[LS_[i][j].j] = (d[i] + LS_[i][j].c);
+          pred[LS_[i][j].j] = i;
+          mejora = true;
+        }
+        comparaciones++;
+      }
+    }
+    if (mejora) numeromejoras++;
+  } while ((numeromejoras < n_) && (mejora == true));
+  /*
+  // para salir del bucle, si mejora es true, pues hay un ciclo, pues hemos
+  realizado n + 1 veces la relajacion con mejora;
+  si mejora es false,
+      pues tenemos solucion
+          // Mostramos los caminos mínimos que se puedan haber encontrado, o
+          advertimos de la existencia de un ciclo de coste negativo.
+  */
+  if (numeromejoras >= n_) {
+    std::cout << "Hay un ciclo de coste negativo" << std::endl;
+  }
+  std::cout << "Soluciones:" << std::endl;
+  for (int i{1}; i < n_; ++i) {
+    if (d[i] != maxint) {
+      std::cout << "El camino desde " << (s + 1) << " al nodo " << (i + 1)
+                << " es : ";
+      MostrarCamino(s, i, pred);
+      std::cout << (i + 1) << " de longitud " << d[i] << std::endl;
+    } else {
+      std::cout << "No hay camino mínimo desde " << (s + 1) << " al nodo "
+                << (i + 1) << std::endl;
+    }
+  }
+}
+
+void GRAFO::ComparativaCM() {
+  unsigned nodo_partida;
+  double comparaciones_dijsktra{0.0}, comparaciones_bfe{0.0};
+  std::cout << "Camino mínimo de un nodo al resto:" << std::endl
+            << "Nodo de partida? [1-6]: ";
+  std::cin >> nodo_partida;
+  std::cout << "Resultados del algoritmo de Dijkstra." << std::endl;
+  Dijkstra_(comparaciones_dijsktra, nodo_partida);
+  std::cout << "Dijsktra ha realizado un total de : " << comparaciones_dijsktra
+            << " comparaciones" << std::endl
+            << std::endl;
+  std::cout << "Resultados del algoritmo de Bellman Ford End." << std::endl;
+  BellmanFordEnd_(comparaciones_bfe, nodo_partida);
+  std::cout << "Ha realizado un total de : " << comparaciones_bfe
+            << " comparaciones" << std::endl
+            << std::endl;
+  std::cout
+      << "El algoritmo general basado en la condición de optimalidad, Bellman, "
+         "Ford, End, ha realizado "
+      << (comparaciones_bfe - comparaciones_dijsktra)
+      << " comparaciones más para mejorar la etiqueta distancia que Dijkstra"
+      << std::endl
+      << std::endl;
+}
+
+void GRAFO::Dijkstra(unsigned s) {
+  // Inicialmente no hay ningun nodo permanentemente etiquetado
+  std::vector<bool> PermanentementeEtiquetado(n_, false);
+  // Inicialmente todas las etiquetas distancias son infinito
+  std::vector<int> d(n_, maxint);
+  // Inicialmente el pred es null
+  std::vector<unsigned> pred(n_, UERROR);
+  int min{maxint};
+  unsigned candidato;
+  // La etiqueta distancia del nodo origen es 0, y es su propio pred
+  d[--s] = 0;
+  pred[s] = s;
+  do {
+    /*
+    -Buscamos un nodo candidato a ser permanentemente etiquetado
+        : aquel de entre los no permanentemente etiquetados,
+        es decir,
+        en el almacén con menor etiqueta distancia no infinita.-
+            Si existe ese candidato,
+    */
+    min = maxint;
+    for (int i{0}; i < n_; ++i) {
+      if (PermanentementeEtiquetado[i] == false) {
+        if (min > d[i]) {
+          min = d[i];
+          candidato = i;
+        }
+      }
+    }
+    /*
+         lo etiquetamos permanentemente y usamos los arcos de la lista de
+             sucesores para buscar atajos.Por cada comparación realizada para
+                 buscar atajos,
+         incrementamos el contador de comparaciones.-
+             Esto lo hacemos mientras haya candidatos
+     */
+    if (min != maxint) {  // mientras hayan candidatos
+      PermanentementeEtiquetado[candidato] = true;
+      for (int i{0}; i < LS_[candidato].size(); ++i) {
+        if (d[candidato] + LS_[candidato][i].c < d[LS_[candidato][i].j]) {
+          d[LS_[candidato][i].j] = d[candidato] + LS_[candidato][i].c;
+          pred[LS_[candidato][i].j] = candidato;
+        }
+      }
+    }
+  } while (min != maxint);
+
+  std::cout << "Soluciones:" << std::endl;
+  /*
+  En esta parte del código,
+      mostramos los caminos mínimos para cada nodo si los hay.
+  */
+  for (int i{1}; i < n_; ++i) {
+    if (d[i] != maxint) {
+      std::cout << "El camino desde " << (s + 1) << " al nodo " << (i + 1)
+                << " es : ";
+      MostrarCamino(s, i, pred);
+      std::cout << (i + 1) << " de longitud " << d[i] << std::endl;
+    } else {
+      std::cout << "No hay camino mínimo desde " << (s + 1) << " al nodo "
+                << (i + 1) << std::endl;
+    }
   }
 }
