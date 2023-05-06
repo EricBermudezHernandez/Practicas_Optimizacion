@@ -46,6 +46,9 @@ class GRAFO {
   void RecorridoAmplitud();  // Construye un recorrido en amplitud desde un nodo
                              // inicial
   void Prim();
+  void MostrarCamino(unsigned s, unsigned i, std::vector<unsigned> pred);
+  void ComparativaCM ();
+  void Dijkstra(unsigned s);
   ~GRAFO();                  // Destructor del objeto grafo
 
  private:
@@ -71,6 +74,8 @@ class GRAFO {
   void bfs_num(
       unsigned i, std::vector<LA_nodo> L, std::vector<unsigned> &pred,
       std::vector<unsigned> &d);  // Recorrido en amplitud con c�lculo de pred y d
+  void Dijkstra_(double &comparaciones, unsigned s);
+  void BellmanFordEnd_(double &comparaciones, unsigned s);
 };
 
 #endif
