@@ -30,6 +30,7 @@ void menu(unsigned dirigido, char &opcion) {
     std::cout << "r. Realizar un recorrido en p[r]ofundidad del grafo desde un "
                  "nodo por sucesores"
               << std::endl;
+    std::cout << "k. [k]ruskal" << std::endl;
     std::cout << "p. Mostrar árbol generador minimo coste, [p]rim" << std::endl;
     // Aquí se añaden más opciones al menú del grafo no dirigido
   } else {
@@ -149,7 +150,7 @@ int main(int argc, char *argv[]) {
         case 'd':
           system("clear");
           unsigned nodo_partida;
-          std::cout << "Camino mínimo de un nodo al resto: Dijkstra\nNodo de partida? [1-6]:";
+          std::cout << "Camino mínimo de un nodo al resto: Dijkstra\nNodo de partida? [1-" << G.GetN() << "]:";
           std::cin >> nodo_partida;
           G.Dijkstra(nodo_partida);
           break;
@@ -157,6 +158,11 @@ int main(int argc, char *argv[]) {
         case 'v':
           system("clear");  // Limpiamos la consola
           G.ComparativaCM();
+          break;
+
+        case 'k':
+          system("clear");
+          G.Kruskal();
           break;
           // Situar aquí el resto de opciones del menú
       }
