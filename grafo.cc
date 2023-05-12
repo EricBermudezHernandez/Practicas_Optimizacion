@@ -484,7 +484,7 @@ void GRAFO::ComparativaCM() {
   unsigned nodo_partida;
   double comparaciones_dijsktra{0.0}, comparaciones_bfe{0.0};
   std::cout << "Camino mínimo de un nodo al resto:" << std::endl
-            << "Nodo de partida? [1-6]: ";
+            << "Nodo de partida? [1-" << n_ << "]: ";
   std::cin >> nodo_partida;
   std::cout << "Resultados del algoritmo de Dijkstra." << std::endl;
   Dijkstra_(comparaciones_dijsktra, nodo_partida);
@@ -568,4 +568,57 @@ void GRAFO::Dijkstra(unsigned s) {
                 << (i + 1) << std::endl;
     }
   }
+}
+
+void GRAFO::Kruskal() {
+  std::vector<AristaPesada> T;
+  std::vector<AristaPesada> Aristas(m_);
+  unsigned k{0};
+  for (unsigned i{0}; i < n_; ++i) {
+    for (unsigned j{0}; j < LS_[i].size(); ++j) {
+      if (i < LS_[i][j].j) {
+        Aristas[k].extremo1 = i;
+        Aristas[k].extremo2 = LS_[i][j].j;
+        Aristas[k++].peso = LS_[i][j].c;
+      }
+    }
+  }
+  int head{0};
+  AristaPesada aux;
+  int suma{0};
+  while (head < Aristas.size()) {
+    for (int i{head + 1}; i < Aristas.size(); ++i) {
+      if (Aristas[i].peso < Aristas[head].peso) {
+        aux = Aristas[i];
+        Aristas[i] = Aristas[head];
+        Aristas[head] = aux;
+      }
+    }
+    head++;
+  }
+  std::vector<unsigned> Raiz(n_);
+  for (unsigned q{0}; q < n_; ++q) {
+    Raiz[q] = q;
+  }
+  int contador{0};
+  unsigned kill;
+  while (T.size() < n_ - 1) {
+    if (Raiz[Aristas[contador].extremo1] != Raiz[Aristas[contador].extremo2]) {
+      T.push_back(Aristas[contador]);
+      kill = Raiz[Aristas[contador].extremo1];
+      for (int k = 0; k < Raiz.size(); k++) {
+        if (Raiz[k] == kill) {
+          Raiz[k] = Raiz[Aristas[contador].extremo2];
+        }
+      }
+    }
+    contador++;
+  }
+  for (int i = 0; i < T.size(); i++) {
+    std::cout << T[i].extremo1 + 1 << "\t";
+    std::cout << T[i].extremo2 + 1 << "\t";
+    std::cout << T[i].peso << "\n";
+    suma += T[i].peso;
+  }
+  std::cout << "La suma mínima es " << suma << std::endl;
 }
