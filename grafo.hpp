@@ -30,6 +30,11 @@ typedef struct {
                // inversiones, etc...
 } ElementoLista;
 
+typedef struct {
+unsigned extremo1, extremo2;
+int peso;
+} AristaPesada;
+
 // definicion del tipo de una lista de adyacencia de un nodo
 typedef std::vector<ElementoLista> LA_nodo;
 
@@ -49,6 +54,8 @@ class GRAFO {
   void MostrarCamino(unsigned s, unsigned i, std::vector<unsigned> pred);
   void ComparativaCM ();
   void Dijkstra(unsigned s);
+  void Kruskal();
+  unsigned GetN() { return n_; }
   ~GRAFO();                  // Destructor del objeto grafo
 
  private:
