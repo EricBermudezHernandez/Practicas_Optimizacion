@@ -1,1 +1,1 @@
-Prácticas de Optimización de el curso 22-23
+Prácticas de Optimización de el curso 22-23. Este repositorio incluye los ficheros correspondientes a el curso 22-23, incluye los métodos Dijkstra, Prim, ComparativaCM, RecorridoProfundidad y Amplitud, Info_Grafo, Es_dirigido, GetN y Kruskal que es correspondiente a el curso 21-22.
